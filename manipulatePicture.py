@@ -2,6 +2,7 @@
 
 from PIL import Image
 import random
+import math
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -60,6 +61,23 @@ def compress(image,pixels):
                 pixelTracker[i][k],pixelTracker[i+1][k],pixelTracker[i][k+1],pixelTracker[i+1][k+1] = 'True'
     return newImage
 
+# Gets the gradient in both directions and then calculates the magnitude
+def edgeDetect(image,pixels):
+    newImage = Image.new('RGB', (image.size[0], image.size[1]))
+    newPixels = newImage.load()
+    #pixelTracker = generateTwoDArray(image.size[1], image.size[0], 0)
+    for k in range(1, image.size[0] - 1):
+        for i in range(1, image.size[1] - 1):
+            avgLeft = (pixels[k-1, i][0] + pixels[k-1, i][1] + pixels[k-1, i][2]) / 3
+            avgRight = (pixels[k+1, i][0] + pixels[k+1, i][1] + pixels[k+1, i][2]) / 3
+            avgUp = (pixels[k, i-1][0] + pixels[k, i-1][1] + pixels[k, i-1][2]) / 3
+            avgDown = (pixels[k, i+1][0] + pixels[k, i+1][1] + pixels[k, i+1][2]) / 3
+            derivativeX = avgRight - avgLeft
+            derivativeY = avgDown - avgUp
+            magnitude = int(math.sqrt((abs(derivativeX)*abs(derivativeX)) + (abs(derivativeY)+abs(derivativeY))))
+            newPixels[k,i] = (magnitude,magnitude,magnitude)
+    return newImage
+
 # Generates a two dimensional array and fills it with the inputted value
 def generateTwoDArray(rows,columns,defaultValue):
     twoD = []
@@ -77,7 +95,9 @@ def main():
     #grain(image)
     #swapColors(image)
     #invert(image,pixels)
-    newImage = compress(image,pixels)
+    #newImage = compress(image,pixels)
+    newImage = edgeDetect(image,pixels)
+    newImage.show()
     #image.show()
 
 if __name__ == "__main__":
