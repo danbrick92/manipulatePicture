@@ -61,7 +61,7 @@ def compress(image,pixels):
                 pixelTracker[i][k],pixelTracker[i+1][k],pixelTracker[i][k+1],pixelTracker[i+1][k+1] = 'True'
     return newImage
 
-# Gets the gradient in both directions and then calculates the magnitude
+# Gets the derivative in both directions (gradient) and then calculates the magnitude
 def edgeDetect(image,pixels):
     newImage = Image.new('RGB', (image.size[0], image.size[1]))
     newPixels = newImage.load()
